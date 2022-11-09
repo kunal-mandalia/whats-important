@@ -14,7 +14,7 @@ function Bullet({ bullet }) {
 
     return (
         <div className="Bullet">
-            <img src={mediaSrc} className="Bullet-image"></img>
+            <img src={mediaSrc} className="Bullet-image" alt="bullet-image"></img>
             <h4>{bullet.description}</h4>
         </div>
     )
