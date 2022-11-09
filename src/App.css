@@ -14,8 +14,8 @@
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  background-color: lightgrey;
+  min-height: 0vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -35,4 +35,19 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.Add-bullet-wrapper {
+  padding: 20px;
+  background-color: lightgrey;
+}
+
+.Bullet {
+  padding: 10px;
+}
+
+.Bullet-image {
+  /* width: 100px; */
+  max-height: 200px;
+  border-radius: 12px;
 }
