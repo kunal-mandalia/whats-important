@@ -14,7 +14,7 @@ function Bullet({ bullet }) {
 
     return (
         <div className="Bullet">
-            <img src={mediaSrc} className="Bullet-image" alt="bullet-image"></img>
+            <img src={mediaSrc} className="Bullet-image" alt="bullet"></img>
             <h4>{bullet.description}</h4>
         </div>
     )
@@ -27,7 +27,7 @@ function BulletList() {
         store
             .getBullets()
             .then(setBullets)
-    }, [store])
+    }, [])
     console.log(bullets)
 
     return (

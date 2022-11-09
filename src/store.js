@@ -19,7 +19,7 @@ class Store {
 
             // Interim solution for Google Chrome to create an objectStore. Will be deprecated
             if (this.db.setVersion) {
-                if (this.db.version != this.dbVersion) {
+                if (this.db.version !== this.dbVersion) {
                     var setVersion = this.db.setVersion(this.dbVersion);
                     setVersion.onsuccess = function () {
                         this.db.createObjectStore(this.db);
@@ -31,14 +31,14 @@ class Store {
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
             console.log(`Upgrading to version ${db.version}`);
-            const objectStore = db.createObjectStore(this.storeName, { keyPath: 'id', autoIncrement: true });
+            db.createObjectStore(this.storeName, { keyPath: 'id', autoIncrement: true });
             this.db = db;
         };
     }
 
     saveBullet(bullet) {
         const transaction = this.db.transaction([this.storeName], "readwrite");
-        const put = transaction.objectStore(this.storeName).put(bullet);
+        transaction.objectStore(this.storeName).put(bullet);
     }
 
     async getBullets() {
