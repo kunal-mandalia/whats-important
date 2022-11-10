@@ -5,10 +5,15 @@ function AddBullet() {
     const [showNewBullet, setShowNewBullet] = useState(false);
     const [description, setDescription] = useState('');
 
-    const handleSave = () => {
-        var input = document.querySelector('input[type=file]');
-        var file = input.files[0];
-        store.saveBullet({ file, description })
+    const handleSave = async () => {
+        try {
+            const input = document.querySelector('input[type=file]');
+            const file = input.files[0];
+            await store.saveBullet({ file, description });
+            setShowNewBullet(false);
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     if (showNewBullet) {
