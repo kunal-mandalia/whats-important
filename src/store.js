@@ -17,22 +17,16 @@ class Store {
                 db.onerror = function (event) {
                     console.log("Error creating/accessing IndexedDB database");
                 };
-
-                // Interim solution for Google Chrome to create an objectStore. Will be deprecated
-                if (db.setVersion) {
-                    if (db.version !== this.dbVersion) {
-                        var setVersion = db.setVersion(this.dbVersion);
-                        setVersion.onsuccess = function () {
-                            db.createObjectStore(this.db);
-                        };
-                    }
-                }
                 return resolve(db);
             }
-            request.onupgradeneeded = (event) => {
+            request.onerror = (event) => {
+                console.error(event);
+                return reject(event);
+            }
+            request.onupgradeneeded = async (event) => {
                 const db = event.target.result;
                 console.log(`Upgrading to version ${db.version}`);
-                db.createObjectStore(this.storeName, { keyPath: 'id', autoIncrement: true });
+                await db.createObjectStore(this.storeName, { keyPath: 'id', autoIncrement: true });
                 return resolve(db);
             };
 
