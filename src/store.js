@@ -53,6 +53,20 @@ class Store {
         });
     }
 
+    async deleteBullet(id) {
+        return new Promise(async (resolve, reject) => {
+            const db = await this.getDBConnection();
+            const transaction = db.transaction([this.storeName], "readwrite");
+            const request = transaction.objectStore(this.storeName).delete(id);
+            request.onsuccess = async () => {
+                const bullets = await this.getBullets();
+                this.subscribers.forEach(f => f(bullets));
+                return resolve();
+            }
+            request.onerror = () => reject();
+        });
+    }
+
     async getBullets() {
         return new Promise(async (resolve, reject) => {
             const db = await this.getDBConnection();
