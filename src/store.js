@@ -17,22 +17,16 @@ class Store {
                 db.onerror = function (event) {
                     console.log("Error creating/accessing IndexedDB database");
                 };
-
-                // Interim solution for Google Chrome to create an objectStore. Will be deprecated
-                if (db.setVersion) {
-                    if (db.version !== this.dbVersion) {
-                        var setVersion = db.setVersion(this.dbVersion);
-                        setVersion.onsuccess = function () {
-                            db.createObjectStore(this.db);
-                        };
-                    }
-                }
                 return resolve(db);
             }
-            request.onupgradeneeded = (event) => {
+            request.onerror = (event) => {
+                console.error(event);
+                return reject(event);
+            }
+            request.onupgradeneeded = async (event) => {
                 const db = event.target.result;
                 console.log(`Upgrading to version ${db.version}`);
-                db.createObjectStore(this.storeName, { keyPath: 'id', autoIncrement: true });
+                await db.createObjectStore(this.storeName, { keyPath: 'id', autoIncrement: true });
                 return resolve(db);
             };
 
@@ -44,6 +38,20 @@ class Store {
             const db = await this.getDBConnection();
             const transaction = db.transaction([this.storeName], "readwrite");
             const request = transaction.objectStore(this.storeName).put(bullet);
+            request.onsuccess = async () => {
+                const bullets = await this.getBullets();
+                this.subscribers.forEach(f => f(bullets));
+                return resolve();
+            }
+            request.onerror = () => reject();
+        });
+    }
+
+    async deleteBullet(id) {
+        return new Promise(async (resolve, reject) => {
+            const db = await this.getDBConnection();
+            const transaction = db.transaction([this.storeName], "readwrite");
+            const request = transaction.objectStore(this.storeName).delete(id);
             request.onsuccess = async () => {
                 const bullets = await this.getBullets();
                 this.subscribers.forEach(f => f(bullets));

@@ -21,6 +21,9 @@ function Bullet({ bullet }) {
         <div className="Bullet">
             <img src={mediaSrc} className="Bullet-image" alt="bullet"></img>
             <h4>{bullet.description}</h4>
+            <button onClick={() => {
+                store.deleteBullet(bullet.id);
+            }}>Delete</button>
         </div>
     )
 }
