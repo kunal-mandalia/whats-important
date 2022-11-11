@@ -13,6 +13,11 @@ function App() {
       <div className="Add-bullet-wrapper">
         <AddBullet className="Add-bullet" />
       </div>
+      <div>
+        <p>
+          App version: {process.env.REACT_APP_VERSION}
+        </p>
+      </div>
     </div>
   );
 }
