@@ -45,10 +45,10 @@ registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   ({ url }) => (
     // Logos & manifest
-    (url.origin === self.location.origin && (url.pathname.endsWith('.png') || url.pathname.endsWith('.json'))
+    (url.origin === self.location.origin && (url.pathname.endsWith('.png') || url.pathname.endsWith('.json')))
       // Icons
       || url.href.includes('kit.fontawesome.com')
-  )),
+  ),
   new StaleWhileRevalidate({
     cacheName: 'files',
     plugins: [
