@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { PulseLoader } from 'react-spinners';
 import { Menu } from './Menu';
 import store from './store';
@@ -59,7 +58,6 @@ function noop() {};
 
 export function MediaSettings({ onEmitUpdate }) {
     const [media, setMedia] = useState([]);
-    const [newFile, setNewFile] = useState();
     const [loading, setLoading] = useState(true);
     const emitUpdate = onEmitUpdate || noop;
 
@@ -130,7 +128,7 @@ export function MediaSettings({ onEmitUpdate }) {
                 {media.map(m => {
                     return (
                     <div key={`file_${m.id}`}>
-                        <img className="Media-Image" src={m.url} />
+                        <img alt="" className="Media-Image" src={m.url} />
                         <div className="Media-Item-Controls"><button className="Small-Button" onClick={() => {
                             handleDelete(m.id)
                         }}>x</button></div>

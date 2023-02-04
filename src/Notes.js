@@ -5,7 +5,6 @@ import remarkGfm from 'remark-gfm'
 import store from './store';
 
 
-// TODO: save to indexeddb
 export function Notes() {
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false);

@@ -3,7 +3,6 @@ import { Calendar } from './Calendar';
 import { useMediaQuery } from './hooks/useMediaQuery'
 import { Media } from './Media';
 import { Notes } from './Notes';
-import { Link } from 'react-router-dom';
 import { Menu } from './Menu';
 
 function MainPage() {
