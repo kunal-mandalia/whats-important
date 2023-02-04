@@ -1,15 +1,23 @@
 import { useState } from 'react';
+import { BULLET_STATUS, BULLET_TYPES } from './constants';
 import store from './store';
+
 
 function AddBullet() {
     const [showNewBullet, setShowNewBullet] = useState(false);
     const [description, setDescription] = useState('');
+    const [bulletType, setBulletType] = useState(BULLET_TYPES[0]);
 
     const handleSave = async () => {
         try {
             const input = document.querySelector('input[type=file]');
             const file = input.files[0];
-            await store.saveBullet({ file, description });
+            await store.saveBullet({
+                file,
+                description,
+                type: bulletType,
+                status: BULLET_STATUS[0]
+            });
             setShowNewBullet(false);
         } catch (e) {
             console.error(e);
@@ -30,7 +38,7 @@ function AddBullet() {
                 </div>
 
                 <div>
-                    <button onClick={handleSave}>Save</button>
+                    <button className="Button" onClick={handleSave}>Save</button>
                     {' '}
                     <button onClick={() => {
                         setShowNewBullet(false)
