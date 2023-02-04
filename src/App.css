@@ -147,7 +147,7 @@ iframe{
 }
 
 .Notes {
-  padding-left: 20px;
+  margin: 0 20px;
   text-align: left;
   opacity: 0.8;
   overflow: scroll;
