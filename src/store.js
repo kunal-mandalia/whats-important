@@ -5,17 +5,20 @@ class Store {
         this.dbVersion = props.dbVersion;
         this.storeName = `${props.storeNamePrefix}-v${this.dbVersion}`;
         this.subscribers = [];
+        this.stores = [
+            'note',
+            'media',
+            'calendar'
+        ];
     }
 
     async getDBConnection() {
         return new Promise((resolve, reject) => {
             const request = this.indexedDB.open("whatsimportant", this.dbVersion);
             request.onsuccess = (event) => {
-                console.log("Success creating/accessing IndexedDB database");
                 const db = request.result;
-
                 db.onerror = function (event) {
-                    console.log("Error creating/accessing IndexedDB database");
+                    console.error("Error creating/accessing IndexedDB database");
                 };
                 return resolve(db);
             }
@@ -26,26 +29,127 @@ class Store {
             request.onupgradeneeded = async (event) => {
                 const db = event.target.result;
                 console.log(`Upgrading to version ${db.version}`);
-                await db.createObjectStore(this.storeName, { keyPath: 'id', autoIncrement: true });
+                await Promise.all(this.stores.map(s => db.createObjectStore(s, { keyPath: 'id', autoIncrement: true })));
                 return resolve(db);
             };
-
         })
     }
 
     async saveBullet(bullet) {
         return new Promise(async (resolve, reject) => {
+            const now = new Date().getTime();
             const db = await this.getDBConnection();
             const transaction = db.transaction([this.storeName], "readwrite");
-            const request = transaction.objectStore(this.storeName).put(bullet);
+
+            for (let i = 0; i < 365; i++) {
+                const request = transaction.objectStore(this.storeName).put({
+                    ...bullet,
+                    date: new Date(now + (1000 * 60 * 60 * 24 * i))
+                });
+
+                request.onsuccess = async () => {
+                    if (i  === 365 - 1) {
+                        const bullets = await this.getBullets();
+                        this.subscribers.forEach(f => f(bullets));
+                        return resolve();
+                    }
+                }
+                request.onerror = () => reject();
+            }
+        });
+    }
+
+    async saveItem(store, id, item) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const db = await this.getDBConnection();
+                const transaction = db.transaction([store], "readwrite");
+                transaction.objectStore(store).put({ id, data: item });
+                return resolve();
+            } catch (e) {
+                return reject(e);
+            }
+        });
+    }
+
+    async saveObject(store, object) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const db = await this.getDBConnection();
+                const transaction = db.transaction([store], "readwrite");
+                transaction.objectStore(store).put(object);
+                return resolve();
+            } catch (e) {
+                return reject(e);
+            }
+        });
+    }
+
+    async getItemById(store, id) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const db = await this.getDBConnection();
+                const transaction = db.transaction([store], "readonly");
+                const request = transaction.objectStore(store).get(id);
+                request.onsuccess = (event) => {
+                    return resolve(event.target.result);
+                }
+                request.onerror = (reason) => {
+                    return reject(reason)
+                }
+            } catch (e) {
+                return reject(e);
+            }
+        })
+    }
+
+    async getAll(store) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const db = await this.getDBConnection();
+                const transaction = db.transaction([store], "readonly");
+                const request = transaction.objectStore(store).getAll();
+                request.onsuccess = (event) => {
+                    return resolve(event.target.result);
+                }
+                request.onerror = (reason) => {
+                    return reject(reason)
+                }
+            } catch (e) {
+                return reject(e);
+            }
+        })
+    }
+
+    async saveNotes(notes) {
+        return this.saveItem('note', 'note', notes);
+    }
+
+    async getNotes() {
+        return this.getItemById('note', 'note');
+    }
+
+    async saveCalendarLinks(links) {
+        return this.saveObject('calendar', links);
+    }
+
+    async getCalendarLinks() {
+        return this.getAll('calendar');
+    }
+
+    async deleteItem(store, id) {
+        return new Promise(async (resolve, reject) => {
+            const db = await this.getDBConnection();
+            const transaction = db.transaction([store], "readwrite");
+            const request = transaction.objectStore(store).delete(id);
             request.onsuccess = async () => {
-                const bullets = await this.getBullets();
-                this.subscribers.forEach(f => f(bullets));
                 return resolve();
             }
             request.onerror = () => reject();
         });
     }
+
+
 
     async deleteBullet(id) {
         return new Promise(async (resolve, reject) => {
@@ -81,7 +185,7 @@ class Store {
 }
 
 const store = new Store({
-    dbVersion: 2,
+    dbVersion: 4,
     storeNamePrefix: 'whatsimportant'
 });
 
