@@ -163,7 +163,7 @@ iframe{
 }
 
 .Settings {
-  padding: 20px;
+  /* padding: 20px; */
 }
 
 .Calendar-Settings-Container {
@@ -187,7 +187,8 @@ iframe{
   border: dashed 2px whitesmoke;
   color: whitesmoke i !important;
   border-radius: 20px;
-  margin: 20px;
+  margin: 25px;
+  padding: 25px;
   overflow: auto;
 }
 

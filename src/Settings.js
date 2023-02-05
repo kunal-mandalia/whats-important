@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { PulseLoader } from 'react-spinners';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 import { Menu } from './Menu';
 import store from './store';
+
 
 export function CalendarSettings({ onEmitUpdate }) {
     const [links, setLinks] = useState({
@@ -56,7 +59,7 @@ export function CalendarSettings({ onEmitUpdate }) {
     )
 }
 
-function noop() {};
+function noop() { };
 
 export function MediaSettings({ onEmitUpdate }) {
     const [media, setMedia] = useState([]);
@@ -129,12 +132,12 @@ export function MediaSettings({ onEmitUpdate }) {
             <div className="Media-Items">
                 {media.map(m => {
                     return (
-                    <div key={`file_${m.id}`}>
-                        <img alt="" className="Media-Image" src={m.url} />
-                        <div className="Media-Item-Controls"><button className="Small-Button" onClick={() => {
-                            handleDelete(m.id)
-                        }}>x</button></div>
-                    </div>
+                        <div key={`file_${m.id}`}>
+                            <img alt="" className="Media-Image" src={m.url} />
+                            <div className="Media-Item-Controls"><button className="Small-Button" onClick={() => {
+                                handleDelete(m.id)
+                            }}>x</button></div>
+                        </div>
                     )
                 })}
             </div>
@@ -152,6 +155,39 @@ export function MediaSettings({ onEmitUpdate }) {
     );
 }
 
+export function ExportDataSettings() {
+    async function handleExport() {
+        /**
+         * Strategy:
+         * /
+         *  /media
+         *      /{fileId}.{type}
+         *  calendar.json
+         *  notes.json
+         */
+        var zip = new JSZip();
+        const dataFolder = zip.folder("data");
+        const imageFolder = zip.folder("media");
+
+        const calendar = await store.getItemById('calendar', 1);
+        dataFolder.file("calendar.json", JSON.stringify(calendar));
+        
+        const note = await store.getItemById('note', 'note');
+        dataFolder.file("note.json", JSON.stringify(note));
+        
+        const media = await store.getAll('media');
+        media.forEach(m => {
+            imageFolder.file(m.file.name, m.file);
+        });
+
+        const content = await zip.generateAsync({ type: "blob" });
+        saveAs(content, "whatsimportant_mydata.zip");
+    }
+    return (
+        <button onClick={handleExport} type="button" className="Button">Download my data</button>
+    )
+}
+
 
 export function SettingsPage() {
     return (
@@ -162,6 +198,12 @@ export function SettingsPage() {
                     <h1>Settings</h1>
                     <hr />
 
+                    <h2>Export data</h2>
+                    <ExportDataSettings />
+                    <br />
+                    <br />
+                    <hr />
+
                     <h2>Media</h2>
                     <MediaSettings />
                     <br />
@@ -170,6 +212,11 @@ export function SettingsPage() {
 
                     <h2>Calendar</h2>
                     <CalendarSettings />
+                    <br />
+                    <br />
+                    <hr />
+
+
                 </div>
             </div>
         </div>
