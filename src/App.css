@@ -93,7 +93,7 @@ input[type=text] {
 .Responsive-item {
   flex-grow: 1;
   flex-basis: 200px;
-  height: calc(100vh - 45px);
+  max-height: calc(100vh - 45px);
   overflow: scroll;
 }
 

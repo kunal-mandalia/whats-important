@@ -137,7 +137,11 @@ class Store {
     }
 
     async saveCalendarLinks(links) {
-        return this.saveObject('calendar', links);
+        return this.saveObject('calendar', 
+        {
+            ...links,
+            id: 1,
+        });
     }
 
     async getCalendarLinks() {

@@ -1,5 +1,5 @@
 import './App.css';
-import MainPage from './MainPage';
+import HomePage from './HomePage';
 import { SettingsPage } from './Settings';
 import {
   createBrowserRouter,
@@ -9,7 +9,7 @@ import {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainPage />,
+    element: <HomePage />,
   },
   {
     path: '/settings',

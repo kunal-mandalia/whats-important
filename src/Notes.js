@@ -46,6 +46,7 @@ export function Notes() {
                         setEditMode(false);
                     });
                 }}>Done</button>
+                <br />
             </div>
         )
     }
@@ -58,6 +59,7 @@ export function Notes() {
                     <button className="Button" onClick={() => {
                         setEditMode(true);
                     }}>Add</button>
+                    <br />
                 </div>
             </div>
         )

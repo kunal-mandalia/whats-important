@@ -49,6 +49,8 @@ export function CalendarSettings({ onEmitUpdate }) {
                 <br />
 
                 <button className="Button" onClick={handleSave}>Save</button>
+                <br />
+                <br />
             </div>
         </>
     )
@@ -143,6 +145,8 @@ export function MediaSettings({ onEmitUpdate }) {
                 <input type="file" id="Media-Image" style={{ display: 'none' }} accept="image/png, image/jpeg" onChange={(e) => {
                     handleSave();
                 }} />
+                <br />
+                <br />
             </div>
         </div>
     );
