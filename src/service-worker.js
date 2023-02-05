@@ -5,6 +5,7 @@ import { ExpirationPlugin } from 'workbox-expiration';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { StaleWhileRevalidate } from 'workbox-strategies';
+import { CACHE_NAME } from './constants';
 
 clientsClaim();
 
@@ -65,4 +66,10 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
+});
+
+self.addEventListener('install', evt => {
+  evt.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(inputs))
+  )
 });
