@@ -31,8 +31,10 @@ export function Calendar({ isSmall }) {
 
     if (loading) {
         return (
-            <div className="Notes Responsive-item">
-                <PulseLoader />
+            <div className="Media-Loading Responsive-item">
+                <div className="Media-Container">
+                    <PulseLoader />
+                </div>
             </div>
         )
     }

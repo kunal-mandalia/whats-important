@@ -14,10 +14,8 @@ function MainPage() {
       </header>
       <div className="Responsive-layout">
         <Media />
+        <Notes />
         <Calendar isSmall={isSmall} />
-        <div className="Responsive-item">
-          <Notes />
-        </div>
       </div>
     </div>
   );
