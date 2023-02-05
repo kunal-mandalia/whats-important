@@ -46,6 +46,7 @@ export function Notes() {
                         setEditMode(false);
                     });
                 }}>Done</button>
+                <br />
             </div>
         )
     }
@@ -54,10 +55,11 @@ export function Notes() {
         return (
             <div className="Responsive-item">
                 <div className="Settings-Container">
-                    <h2>Notes</h2>
+                    <h1>Notes</h1>
                     <button className="Button" onClick={() => {
                         setEditMode(true);
                     }}>Add</button>
+                    <br />
                 </div>
             </div>
         )

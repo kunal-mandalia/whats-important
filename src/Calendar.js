@@ -56,7 +56,7 @@ export function Calendar({ isSmall }) {
             {!calendarSrc && (
                 <div className="Calendar-Settings-Container">
                     <div>
-                        <h2>Calendar</h2>
+                        <h1>Calendar</h1>
                         <CalendarSettings onEmitUpdate={loadLinks} />
                     </div>
                 </div>

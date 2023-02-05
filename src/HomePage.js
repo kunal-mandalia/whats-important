@@ -5,14 +5,15 @@ import { Media } from './Media';
 import { Notes } from './Notes';
 import { Menu } from './Menu';
 
-function MainPage() {
+function HomePage() {
   const isSmall = useMediaQuery('(max-width: 1200px)');
+  const responsiveClass = isSmall ? "Small" : "Responsive-layout";
   return (
     <div className="App">
       <Menu />
       <header className="App-header">
       </header>
-      <div className="Responsive-layout">
+      <div className={responsiveClass}>
         <Media />
         <Notes />
         <Calendar isSmall={isSmall} />
@@ -21,4 +22,4 @@ function MainPage() {
   );
 }
 
-export default MainPage;
+export default HomePage;
