@@ -28,9 +28,16 @@ class Store {
             }
             request.onupgradeneeded = async (event) => {
                 const db = event.target.result;
+                const trx = event.target.transaction;
                 console.log(`Upgrading to version ${db.version}`);
                 await Promise.all(this.stores.map(s => db.createObjectStore(s, { keyPath: 'id', autoIncrement: true })));
-                return resolve(db);
+                trx.oncomplete = () => {    
+                    return resolve(db);
+                }
+                trx.onerror = (event) => {
+                    console.error(event);
+                    return reject(event);
+                }
             };
         })
     }
