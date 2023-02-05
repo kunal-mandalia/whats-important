@@ -68,6 +68,7 @@ export function Notes() {
             <Markdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]}>
                 {notes}
             </Markdown>
+            <br />
             <button className="Button" onClick={() => {
                 setEditMode(true);
             }}>Edit</button>

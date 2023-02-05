@@ -229,10 +229,11 @@ iframe{
 
 .Button {
   border: solid 1px whitesmoke;
-  padding: 12px;
+  padding: 6px 12px;
   border-radius: 4px;
   background-color: transparent;
   color: whitesmoke;
+  font-size: small;
 }
 .Button:hover {
   cursor: pointer;
