@@ -164,8 +164,10 @@ export function ExportDataSettings() {
          *      /{fileId}.{type}
          *  calendar.json
          *  notes.json
+         * 
+         * TODO: store db version metadata
          */
-        var zip = new JSZip();
+        const zip = new JSZip();
         const dataFolder = zip.folder("data");
         const imageFolder = zip.folder("media");
 
