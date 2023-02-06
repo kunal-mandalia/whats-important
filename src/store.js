@@ -190,6 +190,76 @@ class Store {
         })
     }
 
+    async _deleteStore(transaction, store) {
+        return new Promise((resolve, reject) => {
+            const request = transaction.objectStore([store]).clear();
+            request.onsuccess = (event) => {
+                return resolve(event.target.transaction);
+            }
+            request.onerror = (event) => {
+                return reject();
+            }
+        });
+    }
+    async _putObject(transaction, store, object) {
+        return new Promise((resolve, reject) => {
+            const request = transaction.objectStore([store]).put(object);
+            request.onsuccess = (event) => {
+                return resolve(event.target.transaction);
+            }
+            request.onerror = (event) => {
+                return reject();
+            }
+        });
+    }
+
+    async importData(data) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const db = await this.getDBConnection();
+                let trx = db.transaction(['calendar', 'note', 'media'], "readwrite");
+                trx.addEventListener('complete', (event) => {
+                    console.log('Transaction was completed');
+                    return resolve();
+                });
+
+                trx = await this._deleteStore(trx, 'calendar');
+                trx = await this._deleteStore(trx, 'note');
+                trx = await this._deleteStore(trx, 'media');
+
+                trx = await this._putObject(trx, 'calendar', data.calendar);
+                trx = await this._putObject(trx, 'note', data.note);
+                for (let i = 0; i < data.media.length; i++) {
+                    trx = await this._putObject(trx, 'media', {
+                        file: data.media[i].file,
+                    })
+                }
+            } catch (e) {
+                console.error(e);
+                return reject(e);
+            }
+        })
+    }
+
+    async factoryReset() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const db = await this.getDBConnection();
+                let trx = db.transaction(['calendar', 'note', 'media'], "readwrite");
+                trx.addEventListener('complete', (event) => {
+                    console.log('Transaction was completed');
+                    return resolve();
+                });
+                trx = await this._deleteStore(trx, 'calendar');
+                trx = await this._deleteStore(trx, 'note');
+                trx = await this._deleteStore(trx, 'media');
+            } catch (e) {
+                console.error(e);
+                return reject(e);
+            }
+        })
+    }
+
     subscribe(f) {
         this.subscribers.push(f);
     }
