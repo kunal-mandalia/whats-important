@@ -42,30 +42,6 @@ class Store {
         })
     }
 
-    async saveBullet(bullet) {
-        return new Promise(async (resolve, reject) => {
-            const now = new Date().getTime();
-            const db = await this.getDBConnection();
-            const transaction = db.transaction([this.storeName], "readwrite");
-
-            for (let i = 0; i < 365; i++) {
-                const request = transaction.objectStore(this.storeName).put({
-                    ...bullet,
-                    date: new Date(now + (1000 * 60 * 60 * 24 * i))
-                });
-
-                request.onsuccess = async () => {
-                    if (i  === 365 - 1) {
-                        const bullets = await this.getBullets();
-                        this.subscribers.forEach(f => f(bullets));
-                        return resolve();
-                    }
-                }
-                request.onerror = () => reject();
-            }
-        });
-    }
-
     async saveItem(store, id, item) {
         return new Promise(async (resolve, reject) => {
             try {
@@ -158,36 +134,6 @@ class Store {
             }
             request.onerror = () => reject();
         });
-    }
-
-
-
-    async deleteBullet(id) {
-        return new Promise(async (resolve, reject) => {
-            const db = await this.getDBConnection();
-            const transaction = db.transaction([this.storeName], "readwrite");
-            const request = transaction.objectStore(this.storeName).delete(id);
-            request.onsuccess = async () => {
-                const bullets = await this.getBullets();
-                this.subscribers.forEach(f => f(bullets));
-                return resolve();
-            }
-            request.onerror = () => reject();
-        });
-    }
-
-    async getBullets() {
-        return new Promise(async (resolve, reject) => {
-            const db = await this.getDBConnection();
-            const transaction = db.transaction([this.storeName], "readonly");
-            const request = transaction.objectStore(this.storeName).getAll();
-            request.onsuccess = (event) => {
-                return resolve(event.target.result);
-            }
-            request.onerror = (reason) => {
-                return reject(reason)
-            }
-        })
     }
 
     async _deleteStore(transaction, store) {

@@ -69,21 +69,6 @@ input[type=text] {
   }
 }
 
-.Add-bullet-wrapper {
-  padding: 20px;
-  background-color: lightgrey;
-}
-
-.Bullet {
-  padding: 10px;
-}
-
-.Bullet-image {
-  /* width: 100px; */
-  max-height: 200px;
-  border-radius: 12px;
-}
-
 .Responsive-layout {
   display: flex;
   min-height: calc(100vh - 45px);
