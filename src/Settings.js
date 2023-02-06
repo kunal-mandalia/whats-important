@@ -4,6 +4,8 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { Menu } from './Menu';
 import store from './store';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 
 export function CalendarSettings({ onEmitUpdate }) {
@@ -91,7 +93,7 @@ export function MediaSettings({ onEmitUpdate }) {
 
     const handleSave = async () => {
         try {
-            const input = document.querySelector('input[type=file]');
+            const input = document.querySelector("#Media-Image");
             const file = input.files[0];
             store
                 .saveObject('media', {
@@ -155,7 +157,8 @@ export function MediaSettings({ onEmitUpdate }) {
     );
 }
 
-export function ExportDataSettings() {
+export function ImportExportDataSettings() {
+    const [importData, setImportData] = useState(null);
     async function handleExport() {
         /**
          * Strategy:
@@ -173,10 +176,10 @@ export function ExportDataSettings() {
 
         const calendar = await store.getItemById('calendar', 1);
         dataFolder.file("calendar.json", JSON.stringify(calendar));
-        
+
         const note = await store.getItemById('note', 'note');
         dataFolder.file("note.json", JSON.stringify(note));
-        
+
         const media = await store.getAll('media');
         media.forEach(m => {
             imageFolder.file(m.file.name, m.file);
@@ -185,8 +188,98 @@ export function ExportDataSettings() {
         const content = await zip.generateAsync({ type: "blob" });
         saveAs(content, "whatsimportant_mydata.zip");
     }
+
+    async function handleImport() {
+        // TODO: validate import
+        try {
+            const input = document.querySelector("#Import-File");
+            const file = input.files[0];
+            const zipFile = await JSZip.loadAsync(file);
+            const media = await Promise.all(
+                Object.keys(zipFile.files)
+                    .filter((fileName) => fileName.startsWith('media/') && !zipFile.files[fileName].dir)
+                    .map(async (fileName) => {
+                        const blob = await zipFile.files[fileName].async("blob");
+                        const url = URL.createObjectURL(blob);
+                        return {
+                            file: blob,
+                            url,
+                            name: fileName
+                        }
+                    })
+            )
+            const calendar = JSON.parse(await zipFile.files['data/calendar.json'].async("text"));
+            const note = JSON.parse(await zipFile.files['data/note.json'].async("text"));
+            setImportData({
+                media,
+                calendar,
+                note,
+            })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function saveImport() {
+        store.importData(importData)
+            .then(() => {
+                if (window.confirm("Import successful. Reload site?")) {
+                    window.location.reload();
+                }
+            })
+    }
+
+    async function cancelImport() {
+        setImportData(null);
+    }
+
     return (
-        <button onClick={handleExport} type="button" className="Button">Download my data</button>
+        <div>
+            <div className="Import-Export-Controls">
+                <button onClick={handleExport} type="button" className="Button">Export</button>{' '}
+                {
+                    !importData && <>
+                        <label htmlFor="Import-File" className="Button">Import</label>
+                        <input type="file" id="Import-File" style={{ display: 'none' }} accept=".zip" onChange={handleImport} />
+                    </>
+                }
+            </div>
+            <br />
+            {importData && (
+                <div className="Import-Preview">
+                    <h2>Preview Import</h2>
+                    <h3>Media</h3>
+                    <div className="Import-Media-Container">
+                        {(importData.media || []).map(m => {
+                            return <img alt="" className="Media-Image" key={m.name} src={m.url} />
+                        })}
+                    </div>
+                    <br />
+                    <hr />
+
+                    <h3>Calendar</h3>
+
+                    <h4>Desktop</h4>
+                    <small>{(importData.calendar?.desktop) && <a href={importData.calendar.desktop}>{importData.calendar.desktop}</a>}</small>
+
+                    <br />
+                    <h4>Mobile</h4>
+                    <small>{(importData.calendar?.mobile) && <a href={importData.calendar.mobile}>{importData.calendar.mobile}</a>}</small>
+                    <br />
+                    <br />
+                    <hr />
+
+                    <h3>Note</h3>
+                    <Markdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]}>
+                        {importData?.note?.data || ''}
+                    </Markdown>
+                    <br />
+                    <br />
+                    <button className="Button" onClick={saveImport}>Confirm Import</button>{' '}
+                    <button className="Button" onClick={cancelImport}>Cancel</button>
+                </div>
+            )}
+        </div>
     )
 }
 
@@ -201,7 +294,7 @@ export function SettingsPage() {
                     <hr />
 
                     <h2>Export data</h2>
-                    <ExportDataSettings />
+                    <ImportExportDataSettings />
                     <br />
                     <br />
                     <hr />
@@ -218,7 +311,15 @@ export function SettingsPage() {
                     <br />
                     <hr />
 
-
+                    <h2>Factory Reset</h2>
+                    <button className="Button" type="button" onClick={() => {
+                        if (window.confirm("Delete all data?")) {
+                            store.factoryReset()
+                                .then(() => {
+                                    window.location.reload();
+                                });
+                        }
+                    }}>Clear all data</button>
                 </div>
             </div>
         </div>

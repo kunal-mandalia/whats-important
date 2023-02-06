@@ -163,7 +163,7 @@ iframe{
 }
 
 .Settings {
-  /* padding: 20px; */
+  padding: 20px;
 }
 
 .Calendar-Settings-Container {
@@ -193,7 +193,7 @@ iframe{
 }
 
 .Calendar-Settings {
-  text-align: start;  
+  text-align: flex-start;  
 }
 
 .Media-Items {
@@ -244,4 +244,26 @@ iframe{
   align-items: flex-end;
   padding: 12px 20px;
   font-size: normal;
+}
+
+.Import-Export-Controls {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 4px;
+}
+
+.Import-Preview {
+  padding: 40px;
+  border: solid 2px gray;
+  border-radius: 20px;
+  max-width: 600px;
+  text-overflow: ellipsis;
+  overflow: scroll;
+}
+
+.Import-Media-Container {
+  display: flex;
+  overflow: scroll;
+  gap: 6px;
 }
