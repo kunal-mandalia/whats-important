@@ -223,12 +223,10 @@ class Store {
                     return resolve();
                 });
 
-                // delete existing data from store
                 trx = await this._deleteStore(trx, 'calendar');
                 trx = await this._deleteStore(trx, 'note');
                 trx = await this._deleteStore(trx, 'media');
 
-                // // write to store
                 trx = await this._putObject(trx, 'calendar', data.calendar);
                 trx = await this._putObject(trx, 'note', data.note);
                 for (let i = 0; i < data.media.length; i++) {
@@ -252,7 +250,6 @@ class Store {
                     console.log('Transaction was completed');
                     return resolve();
                 });
-                // delete existing data from store
                 trx = await this._deleteStore(trx, 'calendar');
                 trx = await this._deleteStore(trx, 'note');
                 trx = await this._deleteStore(trx, 'media');
