@@ -105,7 +105,7 @@ iframe{
   width: 100%;
   flex-wrap: wrap;
   overflow: scroll;
-  height: 90vh;
+  height: 85vh;
 }
 
 .Media-Loading {
