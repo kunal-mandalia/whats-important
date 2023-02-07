@@ -68,6 +68,35 @@ self.addEventListener('message', (event) => {
   }
 });
 
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    (async function () {
+      console.log('fetch', { event });
+      // const cache = await caches.open('mysite-dynamic');
+      // const cachedResponse = await cache.match(event.request);
+      // if (cachedResponse) return cachedResponse;
+      const networkResponse = await fetch(event.request);
+      // event.waitUntil(cache.put(event.request, networkResponse.clone()));
+      return networkResponse;
+    })(),
+  );
+});
+
+// self.addEventListener('install', (event) => {
+//   event.waitUntil(
+//     (async function () {
+//       const cache = await caches.open('mysite-static-v3');
+//       await cache.addAll([
+//         '/css/whatever-v3.css',
+//         '/css/imgs/sprites-v6.png',
+//         '/css/fonts/whatever-v8.woff',
+//         '/js/all-min-v4.js',
+//         // etc
+//       ]);
+//     })(),
+//   );
+// });
+
 self.addEventListener('activate', function(event) {
   event.waitUntil(
     caches.keys().then(function(cacheNames) {
