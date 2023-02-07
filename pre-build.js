@@ -5,7 +5,7 @@ const path = require("path");
 async function main() {
     console.log("pre-build started");
     const swTemplate = await fs.readFile(path.join(__dirname, '/src/sw.js'), { encoding: "utf-8" });
-    const appVersion = process.env.REACT_APP_VERSION.substring(0, 6);
+    const appVersion = process.env.REACT_APP_VERSION.substring(0, 7);
     const nextCacheName = `WebApp_${appVersion}`;
     const generatedSw = swTemplate.replace("{{SHA_FROM_PRE_BUILD}}", nextCacheName);
 
