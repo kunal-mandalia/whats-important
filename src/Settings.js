@@ -295,20 +295,14 @@ export function SettingsPage() {
 
                     <h2>Export data</h2>
                     <ImportExportDataSettings />
-                    <br />
-                    <br />
                     <hr />
 
                     <h2>Media</h2>
                     <MediaSettings />
-                    <br />
-                    <br />
                     <hr />
 
                     <h2>Calendar</h2>
                     <CalendarSettings />
-                    <br />
-                    <br />
                     <hr />
 
                     <h2>Factory Reset</h2>

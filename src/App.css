@@ -24,7 +24,7 @@ input[type=text] {
   padding: 10px;
   background-color: white;
   font-size: medium;
-  width: 100%;
+  width: calc(100% - 20px);
   max-width: 400px;
   text-overflow: ellipsis;
   border-radius: 8px;
@@ -105,7 +105,7 @@ iframe{
   width: 100%;
   flex-wrap: wrap;
   overflow: scroll;
-  height: calc(100vh - 45px);
+  height: 90vh;
 }
 
 .Media-Loading {
@@ -113,9 +113,9 @@ iframe{
 }
 
 .Media-item {
-  max-width: 100%;
-  max-height: calc(100vh - 45px);
+  width: 100%;
   opacity: 0.9;
+  overflow: hidden;
 }
 
 .Spot-light {
@@ -251,4 +251,11 @@ iframe{
   display: flex;
   overflow: scroll;
   gap: 6px;
+}
+
+.App-Name-Link {
+  text-decoration: none;
+  font-style: normal;
+  font-weight: bold;
+  color: rgb(172, 172, 172);
 }
