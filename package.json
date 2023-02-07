@@ -19,7 +19,7 @@
   },
   "scripts": {
     "start": "export REACT_APP_VERSION=$(git rev-parse HEAD) && react-scripts start",
-    "build": "export REACT_APP_VERSION=$(git rev-parse HEAD) && react-scripts build",
+    "build": "export REACT_APP_VERSION=$(git rev-parse HEAD) && (node ./pre-build.js) && react-scripts build",
     "test": "export REACT_APP_VERSION=$(git rev-parse HEAD) && react-scripts test",
     "eject": "react-scripts eject"
   },

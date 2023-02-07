@@ -6,7 +6,7 @@ import { Menu } from './Menu';
 import store from './store';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-
+import { useNavigate } from 'react-router-dom';
 
 export function CalendarSettings({ onEmitUpdate }) {
     const [links, setLinks] = useState({
@@ -159,6 +159,7 @@ export function MediaSettings({ onEmitUpdate }) {
 
 export function ImportExportDataSettings() {
     const [importData, setImportData] = useState(null);
+    const navigate = useNavigate();
     async function handleExport() {
         /**
          * Strategy:
@@ -224,7 +225,7 @@ export function ImportExportDataSettings() {
         store.importData(importData)
             .then(() => {
                 if (window.confirm("Import successful. Reload site?")) {
-                    window.location.reload();
+                    navigate("/");
                 }
             })
     }
@@ -285,6 +286,7 @@ export function ImportExportDataSettings() {
 
 
 export function SettingsPage() {
+    const navigate = useNavigate();
     return (
         <div>
             <Menu />
@@ -310,7 +312,7 @@ export function SettingsPage() {
                         if (window.confirm("Delete all data?")) {
                             store.factoryReset()
                                 .then(() => {
-                                    window.location.reload();
+                                    navigate("/");
                                 });
                         }
                     }}>Clear all data</button>
