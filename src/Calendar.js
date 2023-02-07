@@ -54,7 +54,7 @@ export function Calendar({ isSmall }) {
             ></iframe>
             )}
             {!calendarSrc && (
-                <div className="Calendar-Settings-Container">
+                <div className="Settings-Container">
                     <div>
                         <h1>Calendar</h1>
                         <CalendarSettings onEmitUpdate={loadLinks} />

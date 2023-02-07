@@ -104,8 +104,8 @@ iframe{
   justify-content: center;
   width: 100%;
   flex-wrap: wrap;
-  overflow: scroll;
-  height: 90vh;
+  overflow: hidden;
+  height: 87.5vh;
 }
 
 .Media-Loading {
@@ -115,7 +115,6 @@ iframe{
 .Media-item {
   width: 100%;
   opacity: 0.9;
-  overflow: hidden;
 }
 
 .Spot-light {
@@ -149,17 +148,6 @@ iframe{
 
 .Settings {
   padding: 20px;
-}
-
-.Calendar-Settings-Container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: calc(100% - 100px);
-  border: dashed 2px whitesmoke;
-  color: whitesmoke i !important;
-  border-radius: 20px;
-  margin: 20px;
 }
 
 .Settings-Container {
