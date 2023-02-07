@@ -34,19 +34,21 @@ export function Notes() {
 
     if (editMode) {
         return (
-            <div className="Notes Responsive-item">
-                <textarea className="Notes-Editor" value={notes} onChange={(e) => {
-                    setNotes(e.target.value);
-                }} />
-                <br />
-                <br />
-                
-                <button className="Button" onClick={() => {
-                    saveNotes().then(() => {
-                        setEditMode(false);
-                    });
-                }}>Done</button>
-                <br />
+            <div className="Responsive-item">
+                <div className="Notes Notes-Writer">
+                    <textarea className="Notes-Editor" value={notes} onChange={(e) => {
+                        setNotes(e.target.value);
+                    }} />
+                    <br />
+                    <br />
+                    
+                    <button className="Button" onClick={() => {
+                        saveNotes().then(() => {
+                            setEditMode(false);
+                        });
+                    }}>Done</button>
+                    <br />
+                </div>
             </div>
         )
     }
@@ -54,7 +56,7 @@ export function Notes() {
     if (!notes) {
         return (
             <div className="Responsive-item">
-                <div className="Settings-Container">
+                <div className="Notes Notes-Add">
                     <h1>Notes</h1>
                     <button className="Button" onClick={() => {
                         setEditMode(true);
@@ -66,14 +68,16 @@ export function Notes() {
     }
 
     return (
-        <div className="Notes Notes-Reader Responsive-item">
-            <Markdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]}>
-                {notes}
-            </Markdown>
-            <br />
-            <button className="Button" onClick={() => {
-                setEditMode(true);
-            }}>Edit</button>
+        <div className="Responsive-item">
+            <div className="Notes Notes-Reader">
+                <Markdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]}>
+                    {notes}
+                </Markdown>
+                <br />
+                <button className="Button" onClick={() => {
+                    setEditMode(true);
+                }}>Edit</button>
+            </div>
         </div>
     )
 }

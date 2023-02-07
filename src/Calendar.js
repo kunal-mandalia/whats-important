@@ -41,20 +41,24 @@ export function Calendar({ isSmall }) {
 
     return (
         <div className="Responsive-item">
+            
             {calendarSrc && (
-                <iframe
-                id="gcal"
-                title="Google Calendar"
-                src={calendarSrc}
-                style={{ borderWidth: 0 }}
-                width="100%"
-                height="100%"
-                frameBorder="0"
-                scrolling="no"
-            ></iframe>
+                <div className="Calendar-Wrapper">
+                    <iframe
+                        id="gcal"
+                        title="Google Calendar"
+                        src={calendarSrc}
+                        style={{ borderWidth: 0 }}
+                        width="100%"
+                        height="90%"
+                        frameBorder="0"
+                        scrolling="no"
+                        className="Calendar-Iframe"
+                    ></iframe>
+            </div>
             )}
             {!calendarSrc && (
-                <div className="Settings-Container">
+                <div className="Settings-Container Calendar-Add-Link">
                     <div>
                         <h1>Calendar</h1>
                         <CalendarSettings onEmitUpdate={loadLinks} />

@@ -82,20 +82,47 @@ input[type=text] {
 }
 
 .Responsive-item:nth-child(1) {
-  flex-grow: 3;
+  flex-grow: 4;
+  margin-top: 15px;
+  margin-left: 40px;
 }
 
 .Responsive-item:nth-child(2) {
   flex-grow: 1;
+  z-index: 2;
+  margin-left: -10%;
 }
 
 .Responsive-item:nth-child(3) {
-  flex-grow: 5;
+  flex-grow: 4;
+  padding-right: 20px;
 }
 
-iframe{
-  filter: invert(.9) saturate(0.5) hue-rotate(145deg);
+/* iframe {
+  filter: invert(.9) saturate(0.75) hue-rotate(90deg);
+  padding-top: 10px;
+  background-color: #a5d41f;
+  border-top-right-radius: 8px;
+} */
+
+.Calendar-Wrapper {
+  padding: 5px;
+  background: linear-gradient(90deg, #508821, #508725);
+  height: calc(100vh - 100px);
+  border-radius: 6px;
+  border-top-left-radius: 0px;
+  margin-bottom: 20px;
 }
+
+.Calendar-Iframe {
+  filter: invert(.9) saturate(1) hue-rotate(120deg);
+  border-radius: 6px;
+  height: 100%;
+}
+
+/* https://calendar.google.com/calendar/embed?height=600&wkst=2&bgcolor=%23039BE5&ctz=Europe%2FLondon&showTitle=1&showNav=1&showDate=1&showPrint=0&showTabs=1&showCalendars=1&showTz=0&mode=WEEK&src=a3VuYWwudi5tYW5kYWxpYUBnbWFpbC5jb20&src=YWRkcmVzc2Jvb2sjY29udGFjdHNAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&src=ZW4udWsjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%237986CB&color=%2333B679&color=%230B8043 */
+
+
 
 .Media-Container {
   display: flex;
@@ -130,24 +157,49 @@ iframe{
   }
 }
 
+/* 0098ff */
+
 .Notes {
-  /* margin: 0 20px; */
   text-align: left;
-  opacity: 0.8;
+  /* opacity: 0.8; */
   overflow: scroll;
   font-size: small;
-  padding: 0 25px;
   border-top-left-radius: 8px;
-  background-color: #1f1f1f;
+  border-bottom-left-radius: 8px;
+  /* background-color: #191919; */
+  /* margin-left: -10%; */
+  /* background: linear-gradient(30deg, #d21372eb, #0099ff); */
+  /* background: linear-gradient(75deg, #b22222eb, #3a9d27); */
+  background: linear-gradient(90deg, #2f6d94e6, #508821);
+  /* background: linear-gradient(90deg, #743052eb, #4b9e9f); */
+  /* background: linear-gradient(30deg, #673ab7c4, #e87a19); */
+  max-width: 100%;
+  /* height: calc(100vh - 167.5px); */
+  
+}
+
+.Notes-Add {
+  padding: 40px;
+}
+
+.Notes-Reader {
+  padding: 0 20px 20px;
+  /* height: calc(100vh - 167.5px); */
+}
+
+.Notes-Writer {
+  padding: 20px;
+  padding-right: 0px;
+  /* height: calc(100vh - 167.5px); */
 }
 
 .Notes-Editor {
   width: 100% !important;
-  height: calc(100vh - 150px) !important;
+  min-height: 50vh !important;
 }
 
 .Settings {
-  padding: 20px;
+  padding: 40px;
 }
 
 .Settings-Container {
@@ -157,16 +209,23 @@ iframe{
   align-items: center;
   height: calc(100% - 100px);
   max-height: calc(100% - 100px);
-  border: dashed 2px whitesmoke;
-  color: whitesmoke i !important;
-  border-radius: 20px;
-  margin: 25px;
+  color: whitesmoke !important;
+  /* border-radius: 20px; */
+  /* margin: 25px;   */
   padding: 25px;
   overflow: auto;
 }
 
+.Settings-Container:nth-child(1) {
+  background: linear-gradient(45deg, #673ab7, transparent);
+}
+
+.Calendar-Add-Link {
+  background: linear-gradient(318deg, #3a97b7  , #1f1a1c) !important;
+}
+
 .Calendar-Settings {
-  text-align: flex-start;  
+  text-align: flex-start;
 }
 
 .Media-Items {
