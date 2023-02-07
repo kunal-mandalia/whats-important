@@ -1,8 +1,6 @@
 export function register() {
     window.addEventListener('load', () => {
-        // TODO handle prod
-        const swUrl = `${process.env.PUBLIC_URL}/sw.js`;
-        // const swUrl = `./sw.js`;
+        const swUrl = `${process.env.PUBLIC_URL}/generated-sw.js`;
         registerValidSW(swUrl);
     })
 }
