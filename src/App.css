@@ -82,9 +82,9 @@ input[type=text] {
 }
 
 .Responsive-item:nth-child(1) {
-  flex-grow: 4;
-  margin-top: 15px;
-  margin-left: 40px;
+  flex-grow: 3;
+  margin-top: 2%;
+  margin-left: 7.5%;
 }
 
 .Responsive-item:nth-child(2) {
@@ -94,8 +94,8 @@ input[type=text] {
 }
 
 .Responsive-item:nth-child(3) {
-  flex-grow: 4;
-  padding-right: 20px;
+  flex-grow: 5;
+  /* padding-right: 20px; */
 }
 
 /* iframe {
@@ -107,16 +107,18 @@ input[type=text] {
 
 .Calendar-Wrapper {
   padding: 5px;
-  background: linear-gradient(90deg, #508821, #508725);
-  height: calc(100vh - 100px);
-  border-radius: 6px;
+  padding-right: 0;
+  padding-bottom: 0;
+  background: linear-gradient(90deg, #a86893, #a86893);
+  height: calc(100vh - 50px);
+  /* border-radius: 6px; */
   border-top-left-radius: 0px;
   margin-bottom: 20px;
 }
 
 .Calendar-Iframe {
-  filter: invert(.9) saturate(1) hue-rotate(120deg);
-  border-radius: 6px;
+  filter: invert(1) saturate(1) hue-rotate(280deg);
+  /* border-radius: 6px; */
   height: 100%;
 }
 
@@ -170,7 +172,7 @@ input[type=text] {
   /* margin-left: -10%; */
   /* background: linear-gradient(30deg, #d21372eb, #0099ff); */
   /* background: linear-gradient(75deg, #b22222eb, #3a9d27); */
-  background: linear-gradient(90deg, #2f6d94e6, #508821);
+  background: linear-gradient(90deg, #a86893, #a86893);
   /* background: linear-gradient(90deg, #743052eb, #4b9e9f); */
   /* background: linear-gradient(30deg, #673ab7c4, #e87a19); */
   max-width: 100%;
