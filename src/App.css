@@ -247,3 +247,21 @@ iframe{
   font-weight: bold;
   color: rgb(172, 172, 172);
 }
+
+.Splash {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 40px);
+  animation: Splash-Text 5s linear;
+  opacity: 0.3;
+}
+
+@keyframes Splash-Text {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.3;
+  }
+}
