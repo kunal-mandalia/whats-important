@@ -1,3 +1,5 @@
+import Airtable from 'airtable';
+
 class Store {
     constructor(props) {
         this.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.OIndexedDB || window.msIndexedDB;
@@ -8,7 +10,8 @@ class Store {
         this.stores = [
             'note',
             'media',
-            'calendar'
+            'calendar',
+            'config',
         ];
     }
 
@@ -30,8 +33,13 @@ class Store {
                 const db = event.target.result;
                 const trx = event.target.transaction;
                 console.log(`Upgrading to version ${db.version}`);
-                await Promise.all(this.stores.map(s => db.createObjectStore(s, { keyPath: 'id', autoIncrement: true })));
-                trx.oncomplete = () => {    
+
+                const newStoreOps = this.stores
+                    .filter(s => !db.objectStoreNames.contains(s))
+                    .map(s => db.createObjectStore(s, { keyPath: 'id', autoIncrement: true }));
+
+                await Promise.all(newStoreOps);
+                trx.oncomplete = () => {
                     return resolve(db);
                 }
                 trx.onerror = (event) => {
@@ -40,6 +48,60 @@ class Store {
                 }
             };
         })
+    }
+
+    async getConfigById(id) {
+        const config = await this.getAll('config');
+        return config.find(c => c.id === id);
+    }
+
+    async readStoreOnline() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const airtableConfig = await this.getConfigById('airtable');
+                const { apiKey, base, table } = airtableConfig;
+                const airtable = new Airtable({
+                    apiKey: apiKey,
+                })
+                airtable
+                    .base(base)(table)
+                    .select({
+                        sort: [{ field: 'Note', direction: 'asc' }]
+                    }).eachPage(function page(records) {
+                        records.forEach(function (record) {
+                            const note = record.get('Note');
+                            const last_modified = record.get('Last Modified');
+                            return resolve({ note, last_modified });
+                        });
+                    }, function done(error) {
+                        if (error) return reject(error);
+                        resolve();
+                    });
+
+            } catch (error) {
+                console.error(error);
+                return reject(error);
+            }
+        })
+    }
+
+    async saveObjectOnline(note) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const airtableConfig = await this.getConfigById('airtable');
+                const { apiKey, base, table, recordId } = airtableConfig;
+                const airtable = new Airtable({
+                    apiKey: apiKey
+                })
+                airtable
+                    .base(base)(table)
+                    .update(recordId, { Note: note }, (data) => {
+                        return resolve(data);
+                    });
+            } catch (error) {
+                return reject(error);
+            }
+        });
     }
 
     async saveItem(store, id, item) {
@@ -104,20 +166,16 @@ class Store {
         })
     }
 
-    async saveNotes(notes) {
-        return this.saveItem('note', 'note', notes);
-    }
-
-    async getNotes() {
+    async getNote() {
         return this.getItemById('note', 'note');
     }
 
     async saveCalendarLinks(links) {
-        return this.saveObject('calendar', 
-        {
-            ...links,
-            id: 1,
-        });
+        return this.saveObject('calendar',
+            {
+                ...links,
+                id: 1,
+            });
     }
 
     async getCalendarLinks() {
@@ -163,7 +221,7 @@ class Store {
         return new Promise(async (resolve, reject) => {
             try {
                 const db = await this.getDBConnection();
-                let trx = db.transaction(['calendar', 'note', 'media'], "readwrite");
+                let trx = db.transaction(this.stores, "readwrite");
                 trx.addEventListener('complete', (event) => {
                     console.log('Transaction was completed');
                     return resolve();
@@ -172,9 +230,13 @@ class Store {
                 trx = await this._deleteStore(trx, 'calendar');
                 trx = await this._deleteStore(trx, 'note');
                 trx = await this._deleteStore(trx, 'media');
+                trx = await this._deleteStore(trx, 'config');
 
                 trx = await this._putObject(trx, 'calendar', data.calendar);
                 trx = await this._putObject(trx, 'note', data.note);
+                if (data.config) {
+                    trx = await this._putObject(trx, 'config', data.config);
+                }
                 for (let i = 0; i < data.media.length; i++) {
                     trx = await this._putObject(trx, 'media', {
                         file: data.media[i].file,
@@ -191,7 +253,7 @@ class Store {
         return new Promise(async (resolve, reject) => {
             try {
                 const db = await this.getDBConnection();
-                let trx = db.transaction(['calendar', 'note', 'media'], "readwrite");
+                let trx = db.transaction(this.stores, "readwrite");
                 trx.addEventListener('complete', (event) => {
                     console.log('Transaction was completed');
                     return resolve();
@@ -199,6 +261,7 @@ class Store {
                 trx = await this._deleteStore(trx, 'calendar');
                 trx = await this._deleteStore(trx, 'note');
                 trx = await this._deleteStore(trx, 'media');
+                trx = await this._deleteStore(trx, 'config');
             } catch (e) {
                 console.error(e);
                 return reject(e);
@@ -212,7 +275,7 @@ class Store {
 }
 
 const store = new Store({
-    dbVersion: 4,
+    dbVersion: 8,
     storeNamePrefix: 'whatsimportant'
 });
 

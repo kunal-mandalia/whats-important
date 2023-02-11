@@ -130,7 +130,7 @@ iframe{
   }
 }
 
-.Notes {
+.Note {
   /* margin: 0 20px; */
   text-align: left;
   opacity: 0.8;
@@ -141,7 +141,7 @@ iframe{
   background-color: #1f1f1f;
 }
 
-.Notes-Editor {
+.Note-Editor {
   width: 100% !important;
   height: calc(100vh - 150px) !important;
 }
