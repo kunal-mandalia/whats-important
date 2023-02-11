@@ -6,7 +6,7 @@ export function SplashScreen() {
     useEffect(() => {
         setTimeout(() => {
             navigate('/');
-        }, 1000 * 5);
+        }, 1000 * 10);
     }, [navigate]);
     return (
         <div className="Splash">
