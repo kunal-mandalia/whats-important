@@ -4,6 +4,22 @@ import { PulseLoader } from 'react-spinners';
 import remarkGfm from 'remark-gfm'
 import store from './store';
 
+function syncStatus(local, server) {
+    if (!local && !server) return 0;
+    if (local && !server) return 1;
+    if (!local && server) return 2;
+    if (local && server) {
+        if (local.note === server.note) return 1;
+        
+        const lt = new Date(local.last_modified).getTime();
+        const st = new Date(server.last_modified).getTime();
+
+        if (lt === st) return 1;
+        if (lt < st) return 2;
+        if (lt > st) return 3;
+    }
+    return 0;
+}
 
 export function Note() {
     const [loading, setLoading] = useState(true);
@@ -23,48 +39,26 @@ export function Note() {
             console.error(e);
         }
 
-        if (!local && !server) {
-            note = '';
-        } else if (!local && server) {
-            note = server.note;
-        } else if (local && !server) {
-            note = local.note;
-        } else {
-            // Both client and server have a note
-            // Check if there's any conflict
-            const lt = new Date(local.last_modified).getTime();
-            const st = new Date(server.last_modified).getTime();
-            if (lt === st) {
+        const status = syncStatus(local, server);
+
+        switch (status) {
+            case 1:
                 note = local.note;
-            } else if (lt > st) {
-                if (window.confirm(`
-Local note (${local.last_modified}) ahead of server (${server.last_modified}). Use local (OK) or Server (Cancel)?
-
-Local note:
-${local.note.substring(0, 20)}
-
-Server note:
-${server.note.substring(0, 20)}
-`)) {
-                    // Save note on server
-                    note = local.note;
-                    await store.saveObjectOnline(note);
-                } else {
-                    note = server.note
-                    await store.saveObject('note', {
-                        id: 1,
-                        note: server.note,
-                        last_modified: server.last_modified,
-                    });
-                }
-            } else if (st > lt) {
+                break;
+            case 2:
                 note = server.note;
                 await store.saveObject('note', {
                     id: 'note',
-                    note: note,
+                    note: server.note,
                     last_modified: server.last_modified,
                 });
-            }
+                break;
+            case 3:
+                note = local.note;
+                await store.saveObjectOnline(note);
+                break;
+            default:
+                break;
         }
 
         setNote(note);
