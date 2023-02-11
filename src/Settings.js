@@ -181,7 +181,11 @@ export function ImportExportDataSettings() {
         const note = await store.getItemById('note', 'note');
         dataFolder.file("note.json", JSON.stringify(note));
 
+        const config = await store.getAll('config');
+        dataFolder.file("config.json", JSON.stringify(config));
+
         const media = await store.getAll('media');
+
         media.forEach(m => {
             imageFolder.file(m.file.name, m.file);
         });
