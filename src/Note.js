@@ -52,6 +52,7 @@ ${server.note.substring(0, 20)}
                         note = local.note;
                         await store.saveObjectOnline(note);
                     } else {
+                        note = server.note
                         await store.saveObject('note', {
                             id: 1,
                             note: server.note,
