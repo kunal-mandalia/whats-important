@@ -219,6 +219,7 @@ class Store {
 
     async importData(data) {
         return new Promise(async (resolve, reject) => {
+            console.log({ data })
             try {
                 const db = await this.getDBConnection();
                 let trx = db.transaction(this.stores, "readwrite");
@@ -235,7 +236,9 @@ class Store {
                 trx = await this._putObject(trx, 'calendar', data.calendar);
                 trx = await this._putObject(trx, 'note', data.note);
                 if (data.config) {
-                    trx = await this._putObject(trx, 'config', data.config);
+                    for (let i = 0; i < data.config.length; i++) {
+                        trx = await this._putObject(trx, 'config', data.config[i]);
+                    }
                 }
                 for (let i = 0; i < data.media.length; i++) {
                     trx = await this._putObject(trx, 'media', {
