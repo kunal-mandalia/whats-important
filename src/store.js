@@ -39,7 +39,7 @@ class Store {
                     .map(s => db.createObjectStore(s, { keyPath: 'id', autoIncrement: true }));
 
                 await Promise.all(newStoreOps);
-                trx.oncomplete = () => {    
+                trx.oncomplete = () => {
                     return resolve(db);
                 }
                 trx.onerror = (event) => {
@@ -57,26 +57,31 @@ class Store {
 
     async readStoreOnline() {
         return new Promise(async (resolve, reject) => {
-            const airtableConfig = await this.getConfigById('airtable');
-            if (!airtableConfig) return reject();
-            const { apiKey, base, table } = airtableConfig;
-            const airtable = new Airtable({
-                apiKey: apiKey,
-            })
-            airtable
-                .base(base)(table)
-                .select({
-                    sort: [ {field: 'Note', direction: 'asc'} ]
-                }).eachPage(function page(records) {
-                    records.forEach(function(record) {
-                        const note = record.get('Note');
-                        const last_modified = record.get('Last Modified');
-                        return resolve({ note, last_modified });
+            try {
+                const airtableConfig = await this.getConfigById('airtable');
+                const { apiKey, base, table } = airtableConfig;
+                const airtable = new Airtable({
+                    apiKey: apiKey,
+                })
+                airtable
+                    .base(base)(table)
+                    .select({
+                        sort: [{ field: 'Note', direction: 'asc' }]
+                    }).eachPage(function page(records) {
+                        records.forEach(function (record) {
+                            const note = record.get('Note');
+                            const last_modified = record.get('Last Modified');
+                            return resolve({ note, last_modified });
+                        });
+                    }, function done(error) {
+                        if (error) return reject(error);
+                        resolve();
                     });
-                }, function done(error) {
-                    if (error) return reject(error);
-                    resolve();
-                });
+
+            } catch (error) {
+                console.error(error);
+                return reject(error);
+            }
         })
     }
 
@@ -166,11 +171,11 @@ class Store {
     }
 
     async saveCalendarLinks(links) {
-        return this.saveObject('calendar', 
-        {
-            ...links,
-            id: 1,
-        });
+        return this.saveObject('calendar',
+            {
+                ...links,
+                id: 1,
+            });
     }
 
     async getCalendarLinks() {
