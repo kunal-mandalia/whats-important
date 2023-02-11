@@ -137,10 +137,7 @@ ${server.note.substring(0, 20)}
             </Markdown>
             <br />
             <button className="Button" onClick={() => {
-                syncData()
-                    .then(() => {
-                        setEditMode(true);
-                    })
+                setEditMode(true);
             }}>Edit</button>
         </div>
     )
