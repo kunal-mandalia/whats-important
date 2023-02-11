@@ -58,6 +58,7 @@ class Store {
     async readStoreOnline() {
         return new Promise(async (resolve, reject) => {
             const airtableConfig = await this.getConfigById('airtable');
+            if (!airtableConfig) return reject();
             const { apiKey, base, table } = airtableConfig;
             const airtable = new Airtable({
                 apiKey: apiKey,
