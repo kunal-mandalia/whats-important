@@ -284,6 +284,65 @@ export function ImportExportDataSettings() {
     )
 }
 
+export function AirtableSettings() {
+    const [values, setValues] = useState({});
+    const keys = ['apiKey', 'base', 'table', 'recordId'];
+
+    useEffect(() => {
+        store
+            .getAll('config')
+            .then((c) => {
+                return c.find(item => item.id === 'airtable')
+            })
+            .then((c) => {
+                if (c) {
+                    setValues(c);
+                }
+            })
+    }, []);
+
+    const handleSave = async () => {
+        await store.saveObject('config', {
+            id: 'airtable',
+            apiKey: values["apiKey"],
+            base: values["base"],
+            table: values["table"],
+            recordId: values["recordId"]
+        });
+    }
+
+    const setKeyValue = (key, value) => {
+        setValues((prev) => ({
+            ...prev,
+            [key]: value
+        }));
+    }
+
+    return (
+        <div>
+            <small>Used to sync notes across devices. Do not store anything sensitive in notes</small>
+            <br />
+            <br />
+
+            {keys.map((k => {
+                return (
+                    <div key={k}>
+                        <label htmlFor={`airtable-${k}`}>{k}</label>
+                        <br />
+                        <input type="text" id={`airtable-${k}`} value={values[k] || ""} onChange={(e) => {
+                            setKeyValue(k, e.target.value)
+                        }}></input>
+                        <br />
+                        <br />
+                    </div>
+                )
+            }))}
+
+            <button className="Button" type="button" onClick={handleSave}>Save</button>
+        </div>
+    )
+}
+
 
 export function SettingsPage() {
     const navigate = useNavigate();
@@ -305,6 +364,10 @@ export function SettingsPage() {
 
                     <h2>Calendar</h2>
                     <CalendarSettings />
+                    <hr />
+
+                    <h2>Airtable integration</h2>
+                    <AirtableSettings />
                     <hr />
 
                     <h2>Factory Reset</h2>

@@ -1,3 +1,5 @@
+import Airtable from 'airtable';
+
 class Store {
     constructor(props) {
         this.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.OIndexedDB || window.msIndexedDB;
@@ -8,7 +10,8 @@ class Store {
         this.stores = [
             'note',
             'media',
-            'calendar'
+            'calendar',
+            'config',
         ];
     }
 
@@ -30,7 +33,12 @@ class Store {
                 const db = event.target.result;
                 const trx = event.target.transaction;
                 console.log(`Upgrading to version ${db.version}`);
-                await Promise.all(this.stores.map(s => db.createObjectStore(s, { keyPath: 'id', autoIncrement: true })));
+
+                const newStoreOps = this.stores
+                    .filter(s => !db.objectStoreNames.contains(s))
+                    .map(s => db.createObjectStore(s, { keyPath: 'id', autoIncrement: true }));
+
+                await Promise.all(newStoreOps);
                 trx.oncomplete = () => {    
                     return resolve(db);
                 }
@@ -40,6 +48,54 @@ class Store {
                 }
             };
         })
+    }
+
+    async getConfigById(id) {
+        const config = await this.getAll('config');
+        return config.find(c => c.id === id);
+    }
+
+    async readStoreOnline() {
+        return new Promise(async (resolve, reject) => {
+            const airtableConfig = await this.getConfigById('airtable');
+            const { apiKey, base, table } = airtableConfig;
+            const airtable = new Airtable({
+                apiKey: apiKey,
+            })
+            airtable
+                .base(base)(table)
+                .select({
+                    sort: [ {field: 'Note', direction: 'asc'} ]
+                }).eachPage(function page(records) {
+                    records.forEach(function(record) {
+                        const note = record.get('Note');
+                        const last_modified = record.get('Last Modified');
+                        return resolve({ note, last_modified });
+                    });
+                }, function done(error) {
+                    if (error) return reject(error);
+                    resolve();
+                });
+        })
+    }
+
+    async saveObjectOnline(note) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const airtableConfig = await this.getConfigById('airtable');
+                const { apiKey, base, table, recordId } = airtableConfig;
+                const airtable = new Airtable({
+                    apiKey: apiKey
+                })
+                airtable
+                    .base(base)(table)
+                    .update(recordId, { Note: note }, (data) => {
+                        return resolve(data);
+                    });
+            } catch (error) {
+                return reject(error);
+            }
+        });
     }
 
     async saveItem(store, id, item) {
@@ -104,11 +160,7 @@ class Store {
         })
     }
 
-    async saveNotes(notes) {
-        return this.saveItem('note', 'note', notes);
-    }
-
-    async getNotes() {
+    async getNote() {
         return this.getItemById('note', 'note');
     }
 
@@ -212,7 +264,7 @@ class Store {
 }
 
 const store = new Store({
-    dbVersion: 4,
+    dbVersion: 8,
     storeNamePrefix: 'whatsimportant'
 });
 

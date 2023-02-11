@@ -2,7 +2,7 @@ import './App.css';
 import { Calendar } from './Calendar';
 import { useMediaQuery } from './hooks/useMediaQuery'
 import { Media } from './Media';
-import { Notes } from './Notes';
+import { Note } from './Note';
 import { Menu } from './Menu';
 
 function HomePage() {
@@ -15,7 +15,7 @@ function HomePage() {
       </header>
       <div className={responsiveClass}>
         <Media />
-        <Notes />
+        <Note />
         <Calendar isSmall={isSmall} />
       </div>
     </div>
