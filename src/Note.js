@@ -10,36 +10,34 @@ export function Note() {
     const [editMode, setEditMode] = useState(false);
     const [note, setNote] = useState('');
 
-    useEffect(() => {
-        async function init() {
-            let local = null;
-            let server = null;
-            let note = '';
-    
-            local = await store.getNote();
-    
-            try {
-                server = await store.readStoreOnline('note');
-            } catch (e) {
-                console.error(e);
-            }
-    
-            if (!local && !server) {
-                note = '';
-            } else if (!local && server) {
-                note = server.note;
-            } else if (local && !server) {
+    async function syncData() {
+        let local = null;
+        let server = null;
+        let note = '';
+
+        local = await store.getNote();
+
+        try {
+            server = await store.readStoreOnline('note');
+        } catch (e) {
+            console.error(e);
+        }
+
+        if (!local && !server) {
+            note = '';
+        } else if (!local && server) {
+            note = server.note;
+        } else if (local && !server) {
+            note = local.note;
+        } else {
+            // Both client and server have a note
+            // Check if there's any conflict
+            const lt = new Date(local.last_modified).getTime();
+            const st = new Date(server.last_modified).getTime();
+            if (lt === st) {
                 note = local.note;
-            } else {
-                // Both client and server have a note
-                // Check if there's any conflict
-                const lt = new Date(local.last_modified).getTime();
-                const st = new Date(server.last_modified).getTime();
-                debugger;
-                if (lt === st) {
-                    note = local.note;
-                } else if (lt > st) {
-                    if (window.confirm(`
+            } else if (lt > st) {
+                if (window.confirm(`
 Local note (${local.last_modified}) ahead of server (${server.last_modified}). Use local (OK) or Server (Cancel)?
 
 Local note:
@@ -48,31 +46,33 @@ ${local.note.substring(0, 20)}
 Server note:
 ${server.note.substring(0, 20)}
 `)) {
-                        // Save note on server
-                        note = local.note;
-                        await store.saveObjectOnline(note);
-                    } else {
-                        note = server.note
-                        await store.saveObject('note', {
-                            id: 1,
-                            note: server.note,
-                            last_modified: server.last_modified,
-                        });
-                    }
-                } else if (st > lt) {
-                    note = server.note;
+                    // Save note on server
+                    note = local.note;
+                    await store.saveObjectOnline(note);
+                } else {
+                    note = server.note
                     await store.saveObject('note', {
-                        id: 'note',
-                        note: note,
+                        id: 1,
+                        note: server.note,
                         last_modified: server.last_modified,
                     });
                 }
+            } else if (st > lt) {
+                note = server.note;
+                await store.saveObject('note', {
+                    id: 'note',
+                    note: note,
+                    last_modified: server.last_modified,
+                });
             }
-    
-            setNote(note);
-            setLoading(false);
         }
-        init();
+
+        setNote(note);
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        syncData();
     }, []);
 
     async function saveNote() {
@@ -137,7 +137,10 @@ ${server.note.substring(0, 20)}
             </Markdown>
             <br />
             <button className="Button" onClick={() => {
-                setEditMode(true);
+                syncData()
+                    .then(() => {
+                        setEditMode(true);
+                    })
             }}>Edit</button>
         </div>
     )
