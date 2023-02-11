@@ -215,10 +215,12 @@ export function ImportExportDataSettings() {
             )
             const calendar = JSON.parse(await zipFile.files['data/calendar.json'].async("text"));
             const note = JSON.parse(await zipFile.files['data/note.json'].async("text"));
+            const config = JSON.parse(await zipFile.files['data/config.json'].async("text"));
             setImportData({
                 media,
                 calendar,
                 note,
+                config
             })
         } catch (error) {
             console.error(error);
