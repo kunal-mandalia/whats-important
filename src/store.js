@@ -215,7 +215,7 @@ class Store {
         return new Promise(async (resolve, reject) => {
             try {
                 const db = await this.getDBConnection();
-                let trx = db.transaction(['calendar', 'note', 'media'], "readwrite");
+                let trx = db.transaction(this.stores, "readwrite");
                 trx.addEventListener('complete', (event) => {
                     console.log('Transaction was completed');
                     return resolve();
@@ -224,9 +224,13 @@ class Store {
                 trx = await this._deleteStore(trx, 'calendar');
                 trx = await this._deleteStore(trx, 'note');
                 trx = await this._deleteStore(trx, 'media');
+                trx = await this._deleteStore(trx, 'config');
 
                 trx = await this._putObject(trx, 'calendar', data.calendar);
                 trx = await this._putObject(trx, 'note', data.note);
+                if (data.config) {
+                    trx = await this._putObject(trx, 'config', data.config);
+                }
                 for (let i = 0; i < data.media.length; i++) {
                     trx = await this._putObject(trx, 'media', {
                         file: data.media[i].file,
@@ -243,7 +247,7 @@ class Store {
         return new Promise(async (resolve, reject) => {
             try {
                 const db = await this.getDBConnection();
-                let trx = db.transaction(['calendar', 'note', 'media'], "readwrite");
+                let trx = db.transaction(this.stores, "readwrite");
                 trx.addEventListener('complete', (event) => {
                     console.log('Transaction was completed');
                     return resolve();
@@ -251,6 +255,7 @@ class Store {
                 trx = await this._deleteStore(trx, 'calendar');
                 trx = await this._deleteStore(trx, 'note');
                 trx = await this._deleteStore(trx, 'media');
+                trx = await this._deleteStore(trx, 'config');
             } catch (e) {
                 console.error(e);
                 return reject(e);
